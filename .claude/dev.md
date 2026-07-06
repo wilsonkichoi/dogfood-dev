@@ -3,7 +3,7 @@ tracker: github
 test_command: "uv run pytest"
 ci_workflow: ci.yml
 merge_policy: squash
-review_action: false
+review_action_installed: false
 work_in_progress_limit: 3
 max_fix_attempts: 3
 max_tasks_per_run: 5
