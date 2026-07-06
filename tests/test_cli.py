@@ -40,3 +40,14 @@ def test_cli_shout_composes_with_name():
         check=True,
     )
     assert result.stdout.strip() == "HELLO, ADA!"
+
+
+def test_cli_unknown_flag_usage_error():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--bogus"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
