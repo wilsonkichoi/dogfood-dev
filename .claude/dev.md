@@ -5,9 +5,9 @@ ci_workflow: ci.yml
 merge_policy: squash
 review_action_installed: false
 work_in_progress_limit: 3
-max_fix_attempts: 3
+max_fix_attempts: 2
 max_tasks_per_run: 5
-auto_merge: false
+auto_merge: true
 ---
 
 Minimal Python CLI (`uv` + pytest). This project exists to dogfood the `dev` plugin's
