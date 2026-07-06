@@ -20,3 +20,23 @@ def test_cli_prints_custom_name():
         check=True,
     )
     assert result.stdout.strip() == "Hello, Ada!"
+
+
+def test_cli_shout_uppercases_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "HELLO, WORLD!"
+
+
+def test_cli_shout_composes_with_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--name", "ada", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "HELLO, ADA!"
