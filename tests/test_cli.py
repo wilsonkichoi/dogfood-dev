@@ -10,3 +10,13 @@ def test_cli_prints_hello_world():
         check=True,
     )
     assert result.stdout.strip() == "Hello, World!"
+
+
+def test_cli_prints_custom_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--name", "Ada"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "Hello, Ada!"
