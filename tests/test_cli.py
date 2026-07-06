@@ -29,7 +29,7 @@ def test_cli_shout_uppercases_greeting():
         text=True,
         check=True,
     )
-    assert result.stdout.strip() == "hello, world!"
+    assert result.stdout.strip() == "HELLO, WORLD!"
 
 
 def test_cli_shout_composes_with_name():
@@ -39,4 +39,4 @@ def test_cli_shout_composes_with_name():
         text=True,
         check=True,
     )
-    assert result.stdout.strip() == "hello, ada!"
+    assert result.stdout.strip() == "HELLO, ADA!"
