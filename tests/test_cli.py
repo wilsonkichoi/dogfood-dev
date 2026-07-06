@@ -1,5 +1,7 @@
 import subprocess
 import sys
+import tomllib
+from pathlib import Path
 
 
 def test_cli_prints_hello_world():
@@ -40,3 +42,30 @@ def test_cli_shout_composes_with_name():
         check=True,
     )
     assert result.stdout.strip() == "HELLO, ADA!"
+
+
+def test_version_matches_pyproject():
+    pyproject = tomllib.loads(
+        (Path(__file__).parent.parent / "pyproject.toml").read_text()
+    )
+    expected_version = pyproject["project"]["version"]
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--version"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == expected_version
+
+
+def test_version_pins_2_0_0():
+    # Deliberately unmeetable: pyproject.toml's version is 0.1.0, not 2.0.0.
+    # This test is intended to keep failing (see docs/ROADMAP.md, task #3:
+    # the exhausting-CI-failure scenario proving max_fix_attempts -> status:blocked).
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--version"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "2.0.0"
