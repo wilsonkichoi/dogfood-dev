@@ -51,3 +51,56 @@ def test_cli_unknown_flag_usage_error():
     assert result.returncode == 2
     assert result.stdout == ""
     assert result.stderr.strip() != ""
+
+
+def test_cli_repeat_prints_greeting_n_times():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--repeat", "3"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.splitlines() == ["Hello, World!"] * 3
+
+
+def test_cli_repeat_composes_with_name_and_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--repeat", "2", "--name", "Ada", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.splitlines() == ["HELLO, ADA!"] * 2
+
+
+def test_cli_repeat_zero_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--repeat", "0"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
+
+
+def test_cli_repeat_negative_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--repeat", "-1"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
+
+
+def test_cli_repeat_non_integer_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--repeat", "abc"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
