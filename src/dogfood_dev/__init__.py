@@ -22,14 +22,26 @@ def _positive_int(value: str) -> int:
     return result
 
 
+_ANSI_RESET = "\x1b[0m"
+_COLOR_CODES = {
+    "red": "\x1b[31m",
+    "green": "\x1b[32m",
+    "blue": "\x1b[34m",
+    "yellow": "\x1b[33m",
+}
+
+
 def main() -> None:
     parser = _ArgumentParser(prog="dogfood-dev")
     parser.add_argument("--name", default="World")
     parser.add_argument("--shout", action="store_true")
     parser.add_argument("--repeat", type=_positive_int, default=1)
+    parser.add_argument("--color", choices=sorted(_COLOR_CODES))
     args = parser.parse_args()
     greeting = f"Hello, {args.name}!"
     if args.shout:
         greeting = greeting.upper()
+    if args.color:
+        greeting = f"{_COLOR_CODES[args.color]}{greeting}{_ANSI_RESET}"
     for _ in range(args.repeat):
         print(greeting)
