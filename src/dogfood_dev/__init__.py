@@ -59,7 +59,8 @@ def main() -> None:
     if args.shout:
         greeting = greeting.upper()
     if args.pad:
-        greeting = f"{' ' * args.pad}{greeting}{' ' * args.pad}"
+        pad = " " * args.pad
+        greeting = f"{pad}{greeting}{pad}"
     if args.color:
         greeting = f"{_COLOR_CODES[args.color]}{greeting}{_ANSI_RESET}"
     if args.json:
