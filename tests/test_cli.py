@@ -107,6 +107,54 @@ def test_cli_repeat_non_integer_is_bad_usage():
     assert result.stderr.strip() != ""
 
 
+def test_cli_farewell_swaps_hello_for_goodbye():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--farewell"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "Goodbye, World!"
+
+
+def test_cli_farewell_composes_with_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--farewell", "--name", "Ada"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "Goodbye, Ada!"
+
+
+def test_cli_farewell_composes_with_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--farewell", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "GOODBYE, WORLD!"
+
+
+def test_cli_farewell_composes_with_name_and_shout():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dogfood_dev",
+            "--farewell",
+            "--name",
+            "ada",
+            "--shout",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "GOODBYE, ADA!"
+
+
 def test_cli_color_red_wraps_greeting():
     result = subprocess.run(
         [sys.executable, "-m", "dogfood_dev", "--color", "red"],
