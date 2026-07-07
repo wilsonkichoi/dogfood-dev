@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 
@@ -152,3 +153,124 @@ def test_cli_farewell_composes_with_name_and_shout():
         check=True,
     )
     assert result.stdout.strip() == "GOODBYE, ADA!"
+
+
+def test_cli_color_red_wraps_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "red"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[31mHello, World!\x1b[0m"
+
+
+def test_cli_color_green_wraps_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "green"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[32mHello, World!\x1b[0m"
+
+
+def test_cli_color_blue_wraps_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "blue"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[34mHello, World!\x1b[0m"
+
+
+def test_cli_color_yellow_wraps_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "yellow"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[33mHello, World!\x1b[0m"
+
+
+def test_cli_color_invalid_value_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "purple"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
+
+
+def test_cli_color_composes_with_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "red", "--name", "Ada"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[31mHello, Ada!\x1b[0m"
+
+
+def test_cli_color_composes_with_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--color", "green", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[32mHELLO, WORLD!\x1b[0m"
+
+
+def test_cli_color_composes_with_name_and_shout():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dogfood_dev",
+            "--color",
+            "blue",
+            "--name",
+            "Ada",
+            "--shout",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.rstrip("\n") == "\x1b[34mHELLO, ADA!\x1b[0m"
+
+
+def test_cli_json_emits_json_message():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(result.stdout) == {"message": "Hello, World!"}
+
+
+def test_cli_json_incompatible_with_repeat_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json", "--repeat", "2"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
+
+
+def test_cli_json_composes_with_name_and_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json", "--name", "Ada", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(result.stdout) == {"message": "HELLO, ADA!"}

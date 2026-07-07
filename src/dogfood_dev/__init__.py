@@ -1,4 +1,5 @@
 import argparse
+import json
 
 
 class _ArgumentParser(argparse.ArgumentParser):
@@ -22,16 +23,33 @@ def _positive_int(value: str) -> int:
     return result
 
 
+_ANSI_RESET = "\x1b[0m"
+_COLOR_CODES = {
+    "red": "\x1b[31m",
+    "green": "\x1b[32m",
+    "blue": "\x1b[34m",
+    "yellow": "\x1b[33m",
+}
+
+
 def main() -> None:
     parser = _ArgumentParser(prog="dogfood-dev")
     parser.add_argument("--name", default="World")
     parser.add_argument("--shout", action="store_true")
-    parser.add_argument("--repeat", type=_positive_int, default=1)
     parser.add_argument("--farewell", action="store_true")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--repeat", type=_positive_int, default=1)
+    group.add_argument("--json", action="store_true")
+    parser.add_argument("--color", choices=sorted(_COLOR_CODES))
     args = parser.parse_args()
     salutation = "Goodbye" if args.farewell else "Hello"
     greeting = f"{salutation}, {args.name}!"
     if args.shout:
         greeting = greeting.upper()
+    if args.color:
+        greeting = f"{_COLOR_CODES[args.color]}{greeting}{_ANSI_RESET}"
+    if args.json:
+        print(json.dumps({"message": greeting}))
+        return
     for _ in range(args.repeat):
         print(greeting)
