@@ -12,12 +12,24 @@ class _ArgumentParser(argparse.ArgumentParser):
         )
 
 
+def _positive_int(value: str) -> int:
+    try:
+        result = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"invalid positive int value: {value!r}")
+    if result < 1:
+        raise argparse.ArgumentTypeError(f"invalid positive int value: {value!r}")
+    return result
+
+
 def main() -> None:
     parser = _ArgumentParser(prog="dogfood-dev")
     parser.add_argument("--name", default="World")
     parser.add_argument("--shout", action="store_true")
+    parser.add_argument("--repeat", type=_positive_int, default=1)
     args = parser.parse_args()
     greeting = f"Hello, {args.name}!"
     if args.shout:
         greeting = greeting.upper()
-    print(greeting)
+    for _ in range(args.repeat):
+        print(greeting)
