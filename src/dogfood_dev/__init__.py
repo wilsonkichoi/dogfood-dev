@@ -27,8 +27,10 @@ def main() -> None:
     parser.add_argument("--name", default="World")
     parser.add_argument("--shout", action="store_true")
     parser.add_argument("--repeat", type=_positive_int, default=1)
+    parser.add_argument("--farewell", action="store_true")
     args = parser.parse_args()
-    greeting = f"Hello, {args.name}!"
+    salutation = "Goodbye" if args.farewell else "Hello"
+    greeting = f"{salutation}, {args.name}!"
     if args.shout:
         greeting = greeting.upper()
     for _ in range(args.repeat):
