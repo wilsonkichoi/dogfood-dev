@@ -52,6 +52,28 @@ closing out Phase E checklist items 3 through the retro-benefit item.
 Task count and exact seeding mechanisms are a `dev:plan` decision; scenario requirements
 fixed by the spec:
 
+**Initial `dev:plan` push** (2026-07-06): 5 tasks — T-R1 (`--repeat`), T-J (`--json`), T-K
+(`--color`), T-X (`--pad`, exhausting-CI vehicle, priority: low), T-R2 (`--farewell`,
+depends on T-R1 via a real Linear "blocked by" relation). Scenarios "one-off intake",
+"manually-created ticket", "Backlog → Todo promotion", "Wont Do", and "spec-impacting
+routing" are deliberately *not* pre-created here — they must arrive later via `dev:backlog`/
+a manual Linear ticket, since that arrival path is what each is proving.
+
+**Demonstration order** (recorded here so a `/loop` session doesn't have to rediscover it):
+
+1. Claim T-R1, T-J, T-K → all reach `In Review` → WIP = `work_in_progress_limit` → Linear
+   full-lifecycle evidence on each.
+2. `/loop /dev:execute` attempts a 4th claim. T-X is a genuinely claimable candidate
+   (independent, no unmet deps) at this point, so the refusal is unambiguously the WIP gate,
+   not "nothing to claim" — the next-task algorithm checks the gate before candidates. Loop
+   idles.
+3. Human verifies/merges T-R1, T-J, T-K → `Done`, WIP drains back down.
+4. Loop claims T-X (lowest priority, only remaining independent task) → deliberately
+   exhausts `max_fix_attempts` → `Blocked` + diagnostic comment.
+5. `dev:retro` runs on T-R1 (now `Done`) → proposes/applies a rule.
+6. T-R2's dependency (T-R1 `Done`) is now satisfied → claimable → its `dev:execute` session
+   demonstrably follows the promoted rule, cited in T-R2's work-summary comment.
+
 | Scenario | Checklist item | Notes |
 |---|---|---|
 | Full Linear lifecycle on ≥1 task, claim guard exercised | Linear backend | `Backlog → Todo → In Progress → In Review → Done`, single-session guard check |

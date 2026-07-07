@@ -35,6 +35,11 @@ flowchart LR
 | `--shout` | uppercases the entire greeting output | composes with `--name`: `--name ada --shout` -> `HELLO, ADA!` |
 | `--version` | stdout: the installed package version (read via `importlib.metadata.version("dogfood-dev")`), exit 0 | short-circuits: ignores `--name`/`--shout` if also passed |
 | unknown flag / bad usage | stderr: a one-line usage message, exit code 2 | exact wording is an implementation choice; the exit code (2) and stream (stderr) are the frozen contract |
+| `--repeat N` | stdout: the greeting printed N times, one per line, exit 0 | `N` a positive integer (`>=1`); non-positive or non-integer `N` is bad usage (exit 2); composes with `--name`/`--shout` per the existing pattern; composition with the other Milestone-2 flags below is unspecified (each is single-concern, independent) |
+| `--json` | stdout: `{"message": "<greeting>"}` (the would-be plain-text greeting), exit 0 | composes with `--name`/`--shout`; incompatible with `--repeat` (bad usage, exit 2, if both given) |
+| `--pad N` | stdout: the greeting with `N` literal space characters on each side, exit 0 | `N` a non-negative integer; invalid `N` is bad usage (exit 2); composes with `--name`/`--shout` |
+| `--color {red,green,blue,yellow}` | stdout: the greeting wrapped in the ANSI escape code for the chosen color plus a reset code | invalid color name is bad usage (exit 2, existing row); composes with `--name`/`--shout` |
+| `--farewell` | stdout: swaps `Hello` for `Goodbye` in the greeting, exit 0 | composes with `--name`/`--shout` per the existing pattern |
 
 No config files, no environment variables, no stdin reading.
 
@@ -131,3 +136,8 @@ not fixed here. Fixed by this spec:
   blanket Linear exclusion; local-backend and true-concurrency exclusions restated
   precisely), added "Milestone-2 test-scenario tasks" section. See ADR-001 for the
   tracker-backend-switch decision. `docs/ROADMAP.md` gets a matching Milestone 2 section.
+- **2026-07-06** — Delta via `/dev:plan` (spec gap found while drafting Milestone 2 packets:
+  no Contract rows existed for any new small feature to serve as a Milestone-2 task vehicle).
+  Added Contracts rows: `--repeat N`, `--json`, `--pad N`, `--color`, `--farewell`. No ADR:
+  trivial additions, no contested tradeoff. `--pad N` is the designated exhausting-CI-failure
+  vehicle (mirrors Milestone 1's `--version` role).
