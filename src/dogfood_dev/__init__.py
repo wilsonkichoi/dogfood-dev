@@ -24,6 +24,7 @@ def _positive_int(value: str) -> int:
 
 
 def _non_negative_int(value: str) -> int:
+    """Parse `--pad`'s value: N literal spaces applied symmetrically on both sides."""
     try:
         result = int(value)
     except ValueError:
