@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 
@@ -104,3 +105,34 @@ def test_cli_repeat_non_integer_is_bad_usage():
     assert result.returncode == 2
     assert result.stdout == ""
     assert result.stderr.strip() != ""
+
+
+def test_cli_json_emits_json_message():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(result.stdout) == {"message": "Hello, World!"}
+
+
+def test_cli_json_incompatible_with_repeat_is_bad_usage():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json", "--repeat", "2"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.strip() != ""
+
+
+def test_cli_json_composes_with_name_and_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--json", "--name", "Ada", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert json.loads(result.stdout) == {"message": "HELLO, ADA!"}
