@@ -1,5 +1,8 @@
 ---
-tracker: github
+tracker: linear
+linear_team: DOG
+linear_project: dogfood-dev
+linear_milestone: Milestone 2
 test_command: "uv run pytest"
 ci_workflow: ci.yml
 merge_policy: squash
@@ -11,8 +14,12 @@ auto_merge: true
 ---
 
 Minimal Python CLI (`uv` + pytest). This project exists to dogfood the `dev` plugin's
-GitHub Issues backend (Phase E, dogfood-dev checklist item 2): real issues, real PRs, real CI,
-including a deliberately failing CI run and a deliberately unmet DoD criterion.
+tracker backends (Phase E). Milestone 1 (closed, GitHub Issues backend, issues #1-4) used
+`tracker: github`; CI stays on GitHub Actions regardless of tracker backend
+(`wilsonkichoi/dogfood-dev` repo, unchanged). Milestone 2 switches to `tracker: linear`
+(workspace `dogfood-dev`, team `DOG`, project `dogfood-dev`, milestone "Milestone 2") per
+ADR-001 (`docs/adr/001-linear-tracker-switch.md`): Linear backend end-to-end, `dev:backlog`
+flows, `/loop` safeguards, `dev:retro` promotion benefit.
 
 - Run tests: `uv run pytest`.
 - Run the CLI: `uv run dogfood-dev`.

@@ -1,6 +1,6 @@
 # SPEC: dogfood-dev
 
-*Approved 2026-07-06.*
+*Approved 2026-07-06. Milestone 2 delta approved 2026-07-06 (see Change log, ADR-001).*
 
 ## Architecture overview
 
@@ -61,12 +61,14 @@ stdout; not a template/shell context, so no injection surface.
 - The CLI must NOT grow user-facing polish, packaging/distribution tooling, or a versioning
   policy beyond what a milestone task explicitly requires; additions exist only to produce
   credible small task packets for tracker-backend testing.
-- Must NOT depend on Linear or the local file tracker backend; this project validates the
-  GitHub Issues backend only.
-- Must NOT add the automatic PR-review GitHub Action (`review_action: false` stands; no
-  `ANTHROPIC_API_KEY` configured). Review stays manual `/dev:review-pr`.
-- Must NOT introduce concurrency, multi-session claim-race scenarios, or any dependency on
-  more than one developer/session acting at once.
+- Must NOT depend on the local file tracker backend; that checklist item already passed on
+  `dogfood-local`. (Milestone 1 was GitHub-Issues-only; Milestone 2 adds Linear — see
+  ADR-001 and the Change log below.)
+- Must NOT add the automatic PR-review GitHub Action (`review_action_installed: false`
+  stands; no `ANTHROPIC_API_KEY` configured). Review stays manual `/dev:review-pr`.
+- Must NOT introduce true multi-session/concurrent claim-race testing: the Linear claim
+  guard (Milestone 2) is proven as a single-session write-then-re-read code-path check, not
+  by racing two coordinated sessions (see ADR-001, PRD Non-goals).
 
 ## Development environment
 
@@ -91,3 +93,41 @@ the exact seeding mechanism (how a CI failure is deliberately introduced, and wh
 DoD criterion non-mechanical) is a `dev:plan` packet-drafting decision, not a contract fixed
 here; only the *existence* of one recoverable-CI-failure task, one exhausting-CI-failure
 task, and one manual-DoD task is fixed.
+
+## Milestone-2 test-scenario tasks
+
+Per `docs/PRD.md` Goals 6-10 (Linear backend, `dev:backlog` flows, unattended safeguards,
+retro benefit). `docs/ROADMAP.md` names the scenario requirements; as with Milestone 1, the
+exact task count, sequencing, and seeding mechanism are `dev:plan` packet-drafting decisions,
+not fixed here. Fixed by this spec:
+
+- At least one task moves through the full Linear workflow-state lifecycle
+  (`Backlog → Todo → In Progress → In Review → Done`) via `dev:execute` → `dev:review-pr` →
+  `dev:verify`, on team `DOG`, with the claim step's write-then-re-read guard exercised
+  (single-session; see Negative requirements).
+- At least one task is created via `dev:backlog` one-off intake (not from the milestone's
+  original `dev:plan` dry-run) with a full packet.
+- At least one ticket is created manually (directly in the Linear UI, incomplete packet) and
+  is caught and completed by `dev:execute`'s packet-validation step at claim time.
+- At least one task demonstrates an explicit `Backlog → Todo` promotion and one demonstrates
+  a `Wont Do` closure with a surviving rationale comment.
+- At least one request is deliberately spec-impacting and is correctly routed by
+  `dev:backlog` to a `dev:architect` delta rather than actioned directly.
+- Enough tasks reach `In Progress`/`In Review` simultaneously (at or above
+  `work_in_progress_limit`) for a `/loop /dev:execute` batch run to observably hit the gate
+  and idle, without requiring true multi-session concurrency (sequential unmerged
+  in-review tasks satisfy the count).
+- At least one task is deliberately constructed to exhaust `max_fix_attempts` and land in
+  `Blocked` with a diagnostic comment (mirrors Milestone 1's exhausting-CI-failure task, now
+  on the Linear backend).
+- `dev:retro` runs on a completed Milestone-2 task, proposes a rule/CLAUDE.md promotion from
+  real evidence, the promotion is applied, and a subsequent task's `dev:execute` session
+  visibly follows it.
+
+## Change log
+
+- **2026-07-06** — Delta via `/dev:backlog` → `/dev:architect` (spec-impacting: Milestone 2
+  request, following the approved PRD delta). Changed: Negative requirements (lifted the
+  blanket Linear exclusion; local-backend and true-concurrency exclusions restated
+  precisely), added "Milestone-2 test-scenario tasks" section. See ADR-001 for the
+  tracker-backend-switch decision. `docs/ROADMAP.md` gets a matching Milestone 2 section.
