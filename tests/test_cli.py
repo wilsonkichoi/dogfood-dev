@@ -245,6 +245,46 @@ def test_cli_color_composes_with_name_and_shout():
     assert result.stdout.rstrip("\n") == "\x1b[34mHELLO, ADA!\x1b[0m"
 
 
+def test_cli_reverse_reverses_greeting():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--reverse"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "!dlroW ,olleH"
+
+
+def test_cli_reverse_composes_with_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--reverse", "--name", "Ada"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "!adA ,olleH"
+
+
+def test_cli_reverse_composes_with_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--reverse", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "!DLROW ,OLLEH"
+
+
+def test_cli_reverse_composes_with_name_and_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--reverse", "--name", "Ada", "--shout"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "!ADA ,OLLEH"
+
+
 def test_cli_json_emits_json_message():
     result = subprocess.run(
         [sys.executable, "-m", "dogfood_dev", "--json"],
