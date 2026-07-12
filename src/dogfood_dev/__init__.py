@@ -35,6 +35,7 @@ _COLOR_CODES = {
 def main() -> None:
     parser = _ArgumentParser(prog="dogfood-dev")
     parser.add_argument("--name", default="World")
+    parser.add_argument("--upper", action="store_true")
     parser.add_argument("--shout", action="store_true")
     parser.add_argument("--reverse", action="store_true")
     parser.add_argument("--farewell", action="store_true")
@@ -44,7 +45,8 @@ def main() -> None:
     parser.add_argument("--color", choices=sorted(_COLOR_CODES))
     args = parser.parse_args()
     salutation = "Goodbye" if args.farewell else "Hello"
-    greeting = f"{salutation}, {args.name}!"
+    name = args.name.upper() if args.upper else args.name
+    greeting = f"{salutation}, {name}!"
     if args.shout:
         greeting = greeting.upper()
     if args.reverse:
