@@ -42,7 +42,6 @@ def test_cli_shout_composes_with_name():
     )
     assert result.stdout.strip() == "HELLO, ADA!"
 
-
 def test_cli_upper_uppercases_name():
     result = subprocess.run(
         [sys.executable, "-m", "dogfood_dev", "--upper"],
@@ -62,6 +61,24 @@ def test_cli_upper_composes_with_name():
     )
     assert result.stdout.strip() == "Hello, ADA!"
 
+def test_cli_exclaim_appends_three_exclamation_marks():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--exclaim"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "Hello, World!!!"
+
+
+def test_cli_exclaim_composes_with_name():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--name", "Ada", "--exclaim"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "Hello, Ada!!!"
 
 def test_cli_unknown_flag_usage_error():
     result = subprocess.run(

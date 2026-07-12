@@ -37,6 +37,7 @@ def main() -> None:
     parser.add_argument("--name", default="World")
     parser.add_argument("--upper", action="store_true")
     parser.add_argument("--shout", action="store_true")
+    parser.add_argument("--exclaim", action="store_true")
     parser.add_argument("--reverse", action="store_true")
     parser.add_argument("--farewell", action="store_true")
     group = parser.add_mutually_exclusive_group()
@@ -51,6 +52,8 @@ def main() -> None:
         greeting = greeting.upper()
     if args.reverse:
         greeting = greeting[::-1]
+    if args.exclaim:
+        greeting = f"{greeting}!!"
     if args.color:
         greeting = f"{_COLOR_CODES[args.color]}{greeting}{_ANSI_RESET}"
     if args.json:
