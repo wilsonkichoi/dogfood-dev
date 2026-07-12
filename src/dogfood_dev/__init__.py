@@ -36,6 +36,7 @@ def main() -> None:
     parser = _ArgumentParser(prog="dogfood-dev")
     parser.add_argument("--name", default="World")
     parser.add_argument("--shout", action="store_true")
+    parser.add_argument("--reverse", action="store_true")
     parser.add_argument("--farewell", action="store_true")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--repeat", type=_positive_int, default=1)
@@ -46,6 +47,8 @@ def main() -> None:
     greeting = f"{salutation}, {args.name}!"
     if args.shout:
         greeting = greeting.upper()
+    if args.reverse:
+        greeting = greeting[::-1]
     if args.color:
         greeting = f"{_COLOR_CODES[args.color]}{greeting}{_ANSI_RESET}"
     if args.json:
