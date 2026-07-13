@@ -80,6 +80,17 @@ def test_cli_exclaim_composes_with_name():
     )
     assert result.stdout.strip() == "Hello, Ada!!!"
 
+
+def test_cli_exclaim_composes_with_shout():
+    result = subprocess.run(
+        [sys.executable, "-m", "dogfood_dev", "--exclaim", "--shout"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert result.stdout == "HELLO, WORLD!!!\n"
+
+
 def test_cli_unknown_flag_usage_error():
     result = subprocess.run(
         [sys.executable, "-m", "dogfood_dev", "--bogus"],
