@@ -13,14 +13,15 @@ this same repo. No milestone 3 is planned.
 claim -> PR -> CI -> review -> verify -> merge (or correctly blocked) on the GitHub Issues
 backend, producing an audited evidence trail for Phase E item 2.
 
-**Scope:** `docs/SPEC.md` Contracts table in full: `--name`, `--shout`, `--version`, and the
-unknown-flag/exit-2 usage error path. Four tasks:
+**Historical scope:** `--name`, `--shout`, and the unknown-flag/exit-2 usage error path
+became the merged CLI contract. `--version` was a historical Wont Do proof vehicle and is not
+implemented. Four tasks:
 
 | Task (working title) | Feature | Test-scenario role |
 |---|---|---|
 | `--name` flag | `--name NAME` support | plain task: full lifecycle, normal green CI |
 | `--shout` flag | `--shout` support, composes with `--name` | carries the **recoverable CI failure**: first CI run must fail, a follow-up commit fixes it and CI goes green, within `max_fix_attempts` |
-| `--version` flag | prints installed package version | carries the **exhausting CI failure**: CI fails persistently across all `max_fix_attempts` fix cycles, task lands in `status:blocked` with a diagnostic comment |
+| `--version` flag | historical Wont Do, not implemented | carried the **exhausting CI failure** proof vehicle; it is not part of the current CLI contract |
 | unknown-flag usage error | stderr usage message, exit code 2 | carries the **manual DoD criterion**: at least one DoD criterion here is not mechanically checkable (e.g. "usage message wording is clear to a human reader"), forcing `dev:verify` to stop for a human regardless of `auto_merge` |
 
 **Success criteria:**
@@ -52,12 +53,18 @@ closing out Phase E checklist items 3 through the retro-benefit item.
 Task count and exact seeding mechanisms are a `dev:plan` decision; scenario requirements
 fixed by the spec:
 
-**Initial `dev:plan` push** (2026-07-06): 5 tasks — T-R1 (`--repeat`), T-J (`--json`), T-K
-(`--color`), T-X (`--pad`, exhausting-CI vehicle, priority: low), T-R2 (`--farewell`,
-depends on T-R1 via a real Linear "blocked by" relation). Scenarios "one-off intake",
+**Historical initial `dev:plan` push** (2026-07-06): 5 tasks — T-R1 (`--repeat`), T-J
+(`--json`), T-K (`--color`), T-X (`--pad`, later a historical Wont Do, priority: low), T-R2
+(`--farewell`, depends on T-R1 via a real Linear "blocked by" relation). Scenarios "one-off intake",
 "manually-created ticket", "Backlog → Todo promotion", "Wont Do", and "spec-impacting
 routing" are deliberately *not* pre-created here — they must arrive later via `dev:backlog`/
 a manual Linear ticket, since that arrival path is what each is proving.
+
+**Current merged CLI scope:** the active flags are `--name`, `--upper`, `--shout`, `--reverse`,
+`--exclaim`, `--color`, `--json`, `--repeat`, and `--farewell`, as specified in
+`docs/SPEC.md` Contracts. Later completed dogfooding tasks added `--reverse` (`DOG-11`),
+`--upper` (`DOG-12`), and `--exclaim` (`DOG-13` and `DOG-14`). `--version` and `--pad N` are
+historical Wont Do items, not active scope; `DOG-8` was canceled.
 
 **Demonstration order** (recorded here so a `/loop` session doesn't have to rediscover it):
 
@@ -68,8 +75,8 @@ a manual Linear ticket, since that arrival path is what each is proving.
    not "nothing to claim" — the next-task algorithm checks the gate before candidates. Loop
    idles.
 3. Human verifies/merges T-R1, T-J, T-K → `Done`, WIP drains back down.
-4. Loop claims T-X (lowest priority, only remaining independent task) → deliberately
-   exhausts `max_fix_attempts` → `Blocked` + diagnostic comment.
+4. Historical record: T-X was the deliberate exhausting-CI proof vehicle. It is now a
+   canceled historical Wont Do item, and `--pad N` is not an active contract.
 5. `dev:retro` runs on T-R1 (now `Done`) → proposes/applies a rule.
 6. T-R2's dependency (T-R1 `Done`) is now satisfied → claimable → its `dev:execute` session
    demonstrably follows the promoted rule, cited in T-R2's work-summary comment.

@@ -26,20 +26,40 @@ flowchart LR
 
 ## Contracts
 
-`main()` reads `sys.argv`. Flags, all optional and composable except `--version`:
+`main()` reads `sys.argv`. Every flag is optional. `--repeat` and `--json` are mutually
+exclusive; all other supported flags compose according to the transformation order below.
 
 | Flag | Effect | Notes |
 |---|---|---|
 | *(none)* | stdout: `Hello, World!` + newline, exit 0 | current behavior, unchanged |
 | `--name NAME` | stdout: `Hello, {NAME}!` + newline, exit 0 | replaces `World`; `NAME` taken verbatim, no escaping/sanitization needed (local CLI, not a security boundary) |
-| `--shout` | uppercases the entire greeting output | composes with `--name`: `--name ada --shout` -> `HELLO, ADA!` |
-| `--version` | stdout: the installed package version (read via `importlib.metadata.version("dogfood-dev")`), exit 0 | short-circuits: ignores `--name`/`--shout` if also passed |
-| unknown flag / bad usage | stderr: a one-line usage message, exit code 2 | exact wording is an implementation choice; the exit code (2) and stream (stderr) are the frozen contract |
-| `--repeat N` | stdout: the greeting printed N times, one per line, exit 0 | `N` a positive integer (`>=1`); non-positive or non-integer `N` is bad usage (exit 2); composes with `--name`/`--shout` per the existing pattern; composition with the other Milestone-2 flags below is unspecified (each is single-concern, independent) |
-| `--json` | stdout: `{"message": "<greeting>"}` (the would-be plain-text greeting), exit 0 | composes with `--name`/`--shout`; incompatible with `--repeat` (bad usage, exit 2, if both given) |
-| `--pad N` | stdout: the greeting with `N` literal space characters on each side, exit 0 | `N` a non-negative integer; invalid `N` is bad usage (exit 2); composes with `--name`/`--shout` |
-| `--color {red,green,blue,yellow}` | stdout: the greeting wrapped in the ANSI escape code for the chosen color plus a reset code | invalid color name is bad usage (exit 2, existing row); composes with `--name`/`--shout` |
-| `--farewell` | stdout: swaps `Hello` for `Goodbye` in the greeting, exit 0 | composes with `--name`/`--shout` per the existing pattern |
+| `--upper` | uppercases `NAME` before the greeting is built | does not uppercase the salutation or punctuation by itself |
+| `--shout` | uppercases the greeting | runs after `--upper`; uppercases the salutation, name, and punctuation-preserving text |
+| `--reverse` | reverses the greeting string | runs after `--shout` |
+| `--exclaim` | appends two literal `!` characters | the base greeting already ends in `!`, so output ends in `!!!`; runs after `--reverse` |
+| `--color {blue,green,red,yellow}` | wraps the completed greeting in the ANSI escape code for the selected color plus `\x1b[0m` | invalid color is bad usage (exit 2); runs before `--json` serialization |
+| `--json` | stdout: a JSON object with the completed greeting in its `message` member | mutually exclusive with `--repeat`; bad usage (exit 2) if both are supplied |
+| `--repeat N` | stdout: the completed greeting printed `N` times, one per line | `N` is a positive integer (`>=1`); non-positive or non-integer `N` is bad usage (exit 2) |
+| `--farewell` | selects `Goodbye` instead of `Hello` as the salutation | participates when the initial greeting is built |
+| unknown flag / bad usage | stderr: a one-line usage message, exit code 2 | includes unknown flags, invalid `--color`, invalid `--repeat`, and `--repeat` with `--json`; exact wording is an implementation choice |
+
+Transformation order is fixed:
+
+1. Build the salutation (`Goodbye` with `--farewell`, otherwise `Hello`) and name (`NAME` with
+   `--name`, otherwise `World`).
+2. Apply `--upper` to the name only.
+3. Build the greeting as `{salutation}, {name}!` and apply `--shout` to that greeting.
+4. Apply `--reverse` to the greeting.
+5. With `--exclaim`, append two extra exclamation marks.
+6. With `--color`, wrap the greeting in the selected ANSI color sequence and reset sequence.
+7. With `--json`, serialize the resulting greeting as the `message` member of the output JSON
+   object. Otherwise, print it `--repeat` times, one line per occurrence.
+
+### Historical Wont Do items
+
+`--version` and `--pad N` are not implemented and are not active CLI contracts. They remain
+only as historical dogfooding proof vehicles: `--version` in Milestone 1 and `--pad N` in
+Milestone 2 (`DOG-8`, canceled).
 
 No config files, no environment variables, no stdin reading.
 
@@ -141,3 +161,6 @@ not fixed here. Fixed by this spec:
   Added Contracts rows: `--repeat N`, `--json`, `--pad N`, `--color`, `--farewell`. No ADR:
   trivial additions, no contested tradeoff. `--pad N` is the designated exhausting-CI-failure
   vehicle (mirrors Milestone 1's `--version` role).
+- **2026-07-13** — Approved delta: reconciled the Contracts section with the
+  merged CLI. Added `--upper`, `--reverse`, and `--exclaim`; fixed the complete composition
+  order; and moved `--version` and `--pad N` to Historical Wont Do items.

@@ -17,7 +17,8 @@ then Linear (Milestone 2).
 ### Architecture
 
 Single-module CLI (`src/dogfood_dev/`), no services, no persistence. `main()` parses argv
-and prints a greeting; flags are `--name`, `--shout`, `--version` (see `docs/SPEC.md`
+and prints a greeting; supported flags are `--name`, `--upper`, `--shout`, `--reverse`,
+`--exclaim`, `--color`, `--json`, `--repeat`, and `--farewell` (see `docs/SPEC.md`
 Contracts). Milestone 1: one task per flag/behavior (see `docs/ROADMAP.md`), each moved
 through the GitHub Issues backend; two tasks doubled as deliberate tracker-backend test
 vehicles (a recoverable CI failure and an exhausting one), one carried a manual DoD
