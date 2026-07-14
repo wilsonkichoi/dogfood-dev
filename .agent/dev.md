@@ -11,6 +11,7 @@ work_in_progress_limit: 3
 max_fix_attempts: 2
 max_tasks_per_run: 5
 auto_merge: true
+context_file: AGENTS.md
 ---
 
 Minimal Python CLI (`uv` + pytest). This project exists to dogfood the `dev` plugin's
