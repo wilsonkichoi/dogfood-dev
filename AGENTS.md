@@ -69,6 +69,18 @@ as `Blocked`, a manual hold, or exhausted retries rather than shipping product f
 must state its post-proof disposition. Specify whether it closes as `Wont Do` with a stated
 rationale or remains in that state pending a named follow-up task.
 
+### Separate merge-gate and post-merge packet requirements
+
+A Definition of Done that `dev:verify` must satisfy before merging may require only evidence
+available before the merge. Do not require a merged PR, a Linear `Done` transition, or
+`dev:retro` as pre-merge evidence. Put those in a separate post-merge action and state
+explicitly that it does not block verification or merge.
+
+Why: DOG-15's original lifecycle DoD required `dev:retro`, merged-PR evidence, and Linear
+`Done` before verification could merge. The first verification stopped at 6/7 until
+`dev:backlog` split pre-merge verification from the post-merge retro action (PR #18,
+2026-07-14).
+
 ### Use state-filtered Linear issue lists for triage and next-task selection
 
 An unfiltered `list_issues` call can silently omit issues that a state-filtered call for the
