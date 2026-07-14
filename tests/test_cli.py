@@ -362,3 +362,26 @@ def test_cli_json_composes_with_name_and_shout():
         check=True,
     )
     assert json.loads(result.stdout) == {"message": "HELLO, ADA!"}
+
+
+def test_cli_json_applies_full_transformation_order():
+    result = subprocess.run(
+        [
+            "uv",
+            "run",
+            "dogfood-dev",
+            "--name",
+            "Ada",
+            "--upper",
+            "--shout",
+            "--reverse",
+            "--exclaim",
+            "--color",
+            "blue",
+            "--json",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert json.loads(result.stdout) == {"message": "\x1b[34m!ADA ,OLLEH!!\x1b[0m"}
